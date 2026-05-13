@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>XOXO · Gossip Girl | La Columna Interactiva</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cinzel:wght@400;600;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --cream: #f5f0e8;
+      --gold: #c9a84c;
+      --gold-light: #e8d48a;
+      --red: #8b1a1a;
+      --rose: #c4736a;
+      --muted: #6b5f52;
+      --border: #2a2320;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--black);
+      color: var(--cream);
+      font-family: 'EB Garamond', Georgia, serif;
+      min-height: 100vh;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .cursor, .cursor-ring { display: none; }
+    @media (min-width: 1024px) {
+      body { cursor: none; }
+      .cursor, .cursor-ring { display: block; }
+    }
+    .cursor {
+      position: fixed; width: 8px; height: 8px; background: var(--gold); border-radius: 50%;
+      pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      position: fixed; width: 32px; height: 32px; border: 1px solid var(--gold); border-radius: 50%;
+      pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); opacity: 0.5;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1000; opacity: 0.4;
+    }
+    header { text-align: center; padding: 60px 20px 40px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #0d0a08 0%, var(--black) 100%); }
+    .masthead-date { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.35em; color: var(--gold); opacity: 0.7; margin-bottom: 20px; text-transform: uppercase; }
+    .masthead-title { font-family: 'Cinzel', serif; font-size: clamp(3.5rem, 10vw, 7rem); font-weight: 900; letter-spacing: 0.12em; color: var(--cream); text-shadow: 0 0 80px rgba(201,168,76,0.2); }
+    .masthead-subtitle { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(1rem, 2.5vw, 1.4rem); color: var(--gold); letter-spacing: 0.15em; }
+    .ticker-wrap { background: var(--red); padding: 8px 0; overflow: hidden; border-bottom: 1px solid #5a0f0f; }
+    .ticker { display: flex; white-space: nowrap; animation: ticker 40s linear infinite; }
+    .ticker span { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.3em; padding: 0 40px; color: #ffd9d9; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    main { max-width: 1200px; margin: 0 auto; padding: 60px 24px; }
+    .section-label { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase; display: flex; align-items: center; gap: 16px; margin-bottom: 40px; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--gold), transparent); opacity: 0.4; }
+    .hero-article { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--border); margin-bottom: 60px; background: #0d0a08; }
+    .hero-image { position: relative; min-height: 380px; background: #141010; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .hero-image img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+    .hero-monogram { font-family: 'Cinzel', serif; font-size: 4rem; font-weight: 900; color: rgba(201,168,76,0.2); z-index: 2; }
+    .hero-badge { position: absolute; top: 20px; left: 20px; background: var(--red); font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.4em; padding: 6px 14px; text-transform: uppercase; z-index: 3; }
+    .hero-content { padding: 48px 44px; border-left: 1px solid var(--border); background: #0d0a08; }
+    .article-tag { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.45em; color: var(--gold); margin-bottom: 16px; text-transform: uppercase; }
+    .hero-headline { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 900; font-style: italic; line-height: 1.15; margin-bottom: 20px; color: var(--cream); }
+    .hero-deck { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-style: italic; color: #b8a896; border-left: 2px solid var(--red); padding-left: 18px; margin-bottom: 24px; }
+    .hero-body { font-size: 0.95rem; line-height: 1.85; color: #9a8e82; margin-bottom: 32px; }
+    .read-more-btn { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.4em; color: var(--gold); background: transparent; border: 1px solid rgba(201,168,76,0.4); padding: 10px 24px; cursor: pointer; transition: all 0.2s; }
+    .articles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 60px; }
+    .article-card { background: #0d0a08; padding: 32px 28px; position: relative; transition: background 0.2s; cursor: pointer; }
+    .article-card:hover { background: #110e0b; }
+    .card-number { position: absolute; top: 20px; right: 22px; font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 900; color: rgba(201,168,76,0.08); }
+    .card-tag { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.4em; color: var(--rose); text-transform: uppercase; margin-bottom: 14px; }
+    .card-headline { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; font-style: italic; line-height: 1.3; margin-bottom: 14px; color: var(--cream); }
+    .card-excerpt { font-size: 0.88rem; line-height: 1.75; color: #7a6e62; }
+    .card-footer { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 16px; border-top: 1px solid #1f1c18; }
+    .card-date { font-family: 'Cinzel', serif; font-size: 0.45rem; letter-spacing: 0.3em; color: #4a4038; }
+    .card-arrow { color: var(--gold); opacity: 0; transition: 0.2s; }
+    .article-card:hover .card-arrow { opacity: 1; }
+    .gossip-quote { border: 1px solid var(--border); padding: 60px 40px; text-align: center; margin-bottom: 60px; background: linear-gradient(135deg, #0d0a08, #100d0a); position: relative; }
+    .quote-mark { font-family: 'Playfair Display', serif; font-size: 6rem; line-height: 0.5; color: var(--red); opacity: 0.6; }
+    .quote-text { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 3vw, 2rem); font-style: italic; max-width: 700px; margin: 0 auto 28px; color: var(--cream); }
+    .two-col { display: grid; grid-template-columns: 2fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 60px; }
+    .sidebar-main { background: #0d0a08; padding: 40px 36px; }
+    .sidebar-panel { background: #080604; padding: 32px 24px; }
+    .sidebar-title { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.5em; color: var(--gold); border-bottom: 1px solid var(--border); padding-bottom: 14px; margin-bottom: 20px; }
+    .sidebar-item { border-bottom: 1px solid #1a1612; padding-bottom: 20px; margin-bottom: 20px; cursor: pointer; }
+    .sidebar-item-tag { font-family: 'Cinzel', serif; font-size: 0.45rem; letter-spacing: 0.35em; color: var(--rose); }
+    .sidebar-item-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-style: italic; color: #b0a49a; }
+    .longread-body p { font-size: 1rem; line-height: 1.9; color: #8a7e72; margin-bottom: 18px; }
+    .longread-body p:first-child::first-letter { font-family: 'Playfair Display', serif; font-size: 4rem; float: left; line-height: 0.7; margin-right: 12px; color: var(--red); font-weight: 900; }
+    .signature-block { text-align: center; padding: 60px 20px; border-top: 1px solid var(--border); margin-top: 20px; }
+    .signature-text { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(1.5rem, 4vw, 2.5rem); color: #3a322a; }
+    .signature-name { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.55em; color: var(--gold); margin-top: 16px; }
+    .admin-float {
+      position: fixed; bottom: 24px; right: 24px; z-index: 2000;
+      background: var(--gold); color: #0a0a0a; border: none;
+      font-family: 'Cinzel', serif; font-size: 0.75rem; padding: 12px 20px;
+      border-radius: 40px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      font-weight: bold;
+    }
+    .admin-panel {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 3000;
+      display: none; justify-content: center; align-items: center; overflow-y: auto;
+      padding: 40px 20px;
+    }
+    .admin-panel.open { display: flex; }
+    .admin-card {
+      max-width: 1000px; width: 100%; background: #1c1612; border: 1px solid var(--gold);
+      padding: 32px; border-radius: 4px; max-height: 90vh; overflow-y: auto;
+    }
+    .admin-card h3 { font-family: 'Cinzel', serif; color: var(--gold); margin: 20px 0 12px; }
+    .admin-card input, .admin-card textarea, .admin-card select {
+      width: 100%; background: #2a2320; border: 1px solid #4a4038; color: var(--cream);
+      padding: 8px 12px; margin-bottom: 12px; font-family: monospace;
+    }
+    .admin-card button { background: var(--gold); border: none; color: #0a0a0a; padding: 8px 18px; margin-right: 8px; cursor: pointer; font-weight: bold; }
+    .admin-card .danger { background: var(--red); color: white; }
+    .article-item { border-bottom: 1px solid #4a4038; padding: 12px 0; display: flex; justify-content: space-between; align-items: center; }
+    .color-grid { display: flex; gap: 12px; flex-wrap: wrap; margin: 15px 0; }
+    .color-control { display: flex; align-items: center; gap: 8px; }
+    @media (max-width: 768px) {
+      .hero-article { grid-template-columns: 1fr; }
+      .articles-grid { grid-template-columns: 1fr; }
+      .two-col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div><div class="cursor-ring" id="cursorRing"></div>
+<header><div class="masthead-date" id="masthead-date"></div><h1 class="masthead-title">XOXO</h1><p class="masthead-subtitle">La Columna que todos leen y nadie admite</p><div class="masthead-rule"><span></span><em>Gossip Girl</em><span></span></div></header>
+<div class="ticker-wrap"><div class="ticker" id="tickerContainer"><span>Cargando secretos...</span></div></div>
+<main id="appMain"></main>
+<footer><div class="footer-logo">XOXO</div><div class="footer-copy">La única columna que importa. NYC · Upper East Side</div></footer>
+
+<button class="admin-float" id="adminToggleBtn">👑 ADMIN</button>
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-card">
+    <div style="display: flex; justify-content: space-between;"><h2 style="color:var(--gold)">XOXO · Consola de Poder</h2><button id="closeAdminBtn" style="background:#333;">✕ Cerrar</button></div>
+    <div id="authSection">
+      <h3>Acceso Restringido</h3>
+      <input type="email" id="adminEmail" placeholder="Email" />
+      <input type="password" id="adminPassword" placeholder="Contraseña" />
+      <button id="loginBtn">Iniciar Sesión</button>
+      <div id="authStatus" style="color: #e8b4b4;"></div>
+    </div>
+    <div id="adminContent" style="display:none;">
+      <h3>🎨 Personalizar Colores</h3>
+      <div class="color-grid" id="colorControls"></div>
+      <button id="saveColorsBtn">Guardar Paleta</button>
+      <h3>📝 Gestionar Columnas (Artículos)</h3>
+      <button id="newArticleBtn">+ Nueva Columna</button>
+      <div id="articlesListAdmin" style="margin-top: 20px;"></div>
+      <h3>📌 Rumores (Sidebar)</h3>
+      <div id="sidebarAdminList"></div>
+      <button id="addRumorBtn">+ Añadir rumor</button>
+      <h3>🏷️ Ticker (noticias rápidas)</h3>
+      <div id="tickerAdminList"></div>
+      <button id="addTickerBtn">+ Mensaje ticker</button>
+      <h3>💬 Cita destacada (Quote)</h3>
+      <textarea id="quoteText" rows="2" style="width:100%"></textarea><button id="saveQuoteBtn">Guardar cita</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ========== CREDENCIALES DE SUPABASE ==========
+  const SUPABASE_URL = 'https://wvjdsbddcgqhtckblcuu.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2amRzYmRkY2dxaHRja2JsY3V1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2MjgwMzMsImV4cCI6MjA5NDIwNDAzM30.MPWALx5WO6FOUabVCrCynUfpNKgDeb_SgyPANOj1eIM';
+  // ==============================================
+
+  let supabaseClient = null;
+  let currentUser = null;
+
+  function initSupabase() {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+  initSupabase();
+
+  const appMain = document.getElementById('appMain');
+  const tickerDiv = document.getElementById('tickerContainer');
+  let siteSettings = { gold: '#c9a84c', red: '#8b1a1a', black: '#0a0a0a', cream: '#f5f0e8', gold_light: '#e8d48a', rose: '#c4736a' };
+  let articles = [], sidebarItems = [], tickerMessages = [], quoteText = "En esta ciudad, los secretos no se guardan. Se invierten.";
+
+  function applyTheme(settings) {
+    const root = document.documentElement.style;
+    root.setProperty('--gold', settings.gold);
+    root.setProperty('--red', settings.red);
+    root.setProperty('--black', settings.black);
+    root.setProperty('--cream', settings.cream);
+    root.setProperty('--gold-light', settings.gold_light);
+    root.setProperty('--rose', settings.rose);
+    if(settings.border) root.setProperty('--border', settings.border);
+  }
+
+  async function loadAllData() {
+    if(!supabaseClient) return;
+    const { data: articlesData } = await supabaseClient.from('articles').select('*').eq('is_published', true).order('published_date', { ascending: false });
+    if(articlesData) articles = articlesData;
+    const { data: sideData } = await supabaseClient.from('sidebar_items').select('*').order('display_order', { ascending: true });
+    if(sideData) sidebarItems = sideData;
+    const { data: tickerData } = await supabaseClient.from('ticker_messages').select('*').order('display_order');
+    if(tickerData) tickerMessages = tickerData;
+    const { data: settingsArr } = await supabaseClient.from('site_settings').select('key, value');
+    if(settingsArr) {
+      settingsArr.forEach(s => { siteSettings[s.key] = s.value; });
+      if(siteSettings.quote_text) quoteText = siteSettings.quote_text;
+      applyTheme(siteSettings);
+    }
+    const { data: quoteSetting } = await supabaseClient.from('site_settings').select('value').eq('key', 'quote_text').single();
+    if(quoteSetting) quoteText = quoteSetting.value;
+    renderPublic();
+    renderTicker();
+  }
+
+  function renderTicker() {
+    if(!tickerMessages.length) { tickerDiv.innerHTML = '<span>✨ XOXO siempre vigilando ✨</span>'; return; }
+    let html = '';
+    for(let i=0;i<3;i++) tickerMessages.forEach(t => html += `<span>${t.message}</span>`);
+    tickerDiv.innerHTML = html;
+  }
+
+  function renderPublic() {
+    const heroArticle = articles.find(a => a.is_hero === true) || articles[0];
+    const otherArticles = articles.filter(a => a.id !== heroArticle?.id).slice(0, 3);
+    const editorialArticle = heroArticle || { title: "El poder siempre deja rastro", content: "Todo el mundo sabe quién cayó. Nadie quiere admitir que lo vio venir." };
+    const longreadContent = editorialArticle.content || "El poder siempre deja rastro...";
+    const longreadTitle = editorialArticle.title;
+
+    const sidebarHtml = sidebarItems.map(item => `
+      <div class="sidebar-item"><div class="sidebar-item-tag">${item.tag}</div><div class="sidebar-item-title">${item.title}</div></div>
+    `).join('');
+    const gridHtml = otherArticles.map((a, idx) => `
+      <article class="article-card" onclick="openArticleModal(${a.id})"><div class="card-number">0${idx+1}</div>
+      <div class="card-tag">${a.category || 'Escándalo'}</div><h3 class="card-headline">${a.title}</h3>
+      <p class="card-excerpt">${a.excerpt || (a.content?.substring(0,120)+'…')}</p>
+      <div class="card-footer"><span class="card-date">${new Date(a.published_date).toLocaleDateString('es-ES')}</span><span class="card-arrow">→</span></div></article>
+    `).join('');
+    const heroImg = heroArticle?.image_url ? `<img src="${heroArticle.image_url}" alt="hero">` : `<span class="hero-monogram">GG</span>`;
+    const heroHtml = `
+      <article class="hero-article">
+        <div class="hero-image"><div style="position:relative; width:100%;height:100%;">${heroImg}<div class="hero-badge">Exclusiva</div></div></div>
+        <div class="hero-content"><div class="article-tag">${heroArticle?.category || 'Upper East Side'}</div>
+        <h2 class="hero-headline">${heroArticle?.title || 'La Heredera que Volvió sin Avisar'}</h2>
+        <p class="hero-deck">"${heroArticle?.excerpt || 'Sus secretos llegaron antes que ella'}"</p>
+        <div class="hero-body">${(heroArticle?.content?.substring(0, 200) || 'El Upper East Side vuelve a temblar.')}...</div>
+        <button class="read-more-btn" onclick="openArticleModal(${heroArticle?.id})">Leer más</button></div>
+      </article>`;
+    const longreadBody = `<div class="longread-body">${longreadContent.substring(0, 800)}</div>`;
+    const finalHtml = `
+      <div class="section-label">Exclusiva de la semana</div>${heroHtml}
+      <div class="section-label">Lo que circula</div><div class="articles-grid">${gridHtml || '<p>No hay columnas aún</p>'}</div>
+      <div class="gossip-quote"><span class="quote-mark">"</span><p class="quote-text">${quoteText}</p><div class="quote-attribution">— Gossip Girl · Columna</div></div>
+      <div class="section-label">En Profundidad</div>
+      <div class="two-col"><div class="sidebar-main"><div class="article-tag">Análisis</div><h2 class="longread-headline">${longreadTitle}</h2>${longreadBody}</div>
+      <div class="sidebar-panel"><div class="sidebar-title">Rumores de la Semana</div>${sidebarHtml || '<div class="sidebar-item">No hay rumores aún</div>'}</div></div>
+      <div class="signature-block"><p class="signature-text">Y recuerda, querida:<br/>estoy en todas partes.</p><p class="signature-name">XOXO, Gossip Girl</p></div>
+    `;
+    appMain.innerHTML = finalHtml;
+  }
+
+  window.openArticleModal = async (id) => {
+    const article = articles.find(a => a.id === id);
+    if(!article) return;
+    const modalHtml = `
+      <div style="position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:4000; display:flex; align-items:center; justify-content:center;" onclick="this.remove()">
+        <div style="max-width:600px; background:#0d0a08; padding:32px; border:1px solid var(--gold); max-height:80vh; overflow:auto;" onclick="event.stopPropagation()">
+          <div style="font-family:Cinzel; color:var(--gold);">${article.category || 'EXCLUSIVA'}</div>
+          <h2 style="font-family:'Playfair Display'; font-size:1.8rem;">${article.title}</h2>
+          <p style="color:#b8a896; margin:12px 0;">Por ${article.author || 'Gossip Girl'} · ${new Date(article.published_date).toLocaleDateString('es-ES')}</p>
+          ${article.image_url ? `<img src="${article.image_url}" style="width:100%; margin:16px 0; border-radius:4px;">` : ''}
+          <div style="line-height:1.7; color:#cbc2b5;">${article.content}</div>
+          <button style="margin-top:20px; background:var(--red); padding:8px 20px; color:white; border:none;" onclick="this.closest('[onclick]').remove()">Cerrar</button>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+  }
+
+  // Elementos del admin
+  const adminToggle = document.getElementById('adminToggleBtn');
+  const adminPanel = document.getElementById('adminPanel');
+  const closeAdmin = document.getElementById('closeAdminBtn');
+  const loginBtn = document.getElementById('loginBtn');
+  const authSection = document.getElementById('authSection');
+  const adminContent = document.getElementById('adminContent');
+  const authStatus = document.getElementById('authStatus');
+
+  // Forzar apertura con estilo inline por si acaso
+  adminToggle.onclick = (e) => {
+    e.preventDefault();
+    adminPanel.style.display = 'flex';
+    adminPanel.classList.add('open');
+  };
+  closeAdmin.onclick = () => {
+    adminPanel.style.display = 'none';
+    adminPanel.classList.remove('open');
+    if(!currentUser) adminContent.style.display = 'none';
+  };
+
+  async function loadAdminArticles() { if(!currentUser) return; const { data } = await supabaseClient.from('articles').select('*').order('published_date', {ascending:false}); renderAdminArticles(data); }
+  function renderAdminArticles(arts) {
+    const container = document.getElementById('articlesListAdmin');
+    container.innerHTML = arts.map(a => `<div class="article-item"><span><strong>${a.title}</strong> - ${a.author} - ${a.published_date}</span><div><button onclick="editArticle(${a.id})">✏️</button><button class="danger" onclick="deleteArticle(${a.id})">🗑️</button></div></div>`).join('');
+  }
+  window.editArticle = async (id) => { const { data } = await supabaseClient.from('articles').select('*').eq('id', id).single(); showArticleForm(data); };
+  window.deleteArticle = async (id) => { if(confirm('Eliminar columna?')) { await supabaseClient.from('articles').delete().eq('id', id); loadAdminArticles(); loadAllData(); } };
+  async function showArticleForm(article=null) {
+    const title = prompt('Título', article?.title || '');
+    const author = prompt('Autor/a', article?.author || 'Gossip Girl');
+    const excerpt = prompt('Entradilla', article?.excerpt || '');
+    const content = prompt('Contenido completo (HTML o texto)', article?.content || '');
+    const image_url = prompt('URL de la imagen (opcional)', article?.image_url || '');
+    const published_date = prompt('Fecha (YYYY-MM-DD)', article?.published_date || new Date().toISOString().slice(0,10));
+    const category = prompt('Categoría (ej: Escándalo, Amor, Venganza)', article?.category || 'Chisme');
+    const is_hero = confirm('¿Marcar como artículo principal (Hero)?');
+    if(title && content) {
+      const payload = { title, author, excerpt, content, image_url, published_date, category, is_hero, is_published: true, updated_at: new Date() };
+      if(article?.id) await supabaseClient.from('articles').update(payload).eq('id', article.id);
+      else await supabaseClient.from('articles').insert(payload);
+      loadAdminArticles(); loadAllData();
+    }
+  }
+  document.getElementById('newArticleBtn').onclick = () => showArticleForm(null);
+  async function loadSidebarAdmin() { const { data } = await supabaseClient.from('sidebar_items').select('*').order('display_order'); const cont = document.getElementById('sidebarAdminList'); cont.innerHTML = data.map(s => `<div class="article-item"><span><b>${s.tag}</b>: ${s.title}</span><button class="danger" onclick="deleteSidebarItem(${s.id})">✖️</button></div>`).join(''); }
+  window.deleteSidebarItem = async (id) => { await supabaseClient.from('sidebar_items').delete().eq('id', id); loadSidebarAdmin(); loadAllData(); };
+  document.getElementById('addRumorBtn').onclick = async () => { const tag = prompt('Tag (Spotted/Whisper)','Spotted'); const title=prompt('Texto del rumor'); if(tag && title){ await supabaseClient.from('sidebar_items').insert({tag, title, display_order: Date.now()}); loadSidebarAdmin(); loadAllData();} };
+  async function loadTickerAdmin() { const { data } = await supabaseClient.from('ticker_messages').select('*'); const cont = document.getElementById('tickerAdminList'); cont.innerHTML = data.map(t => `<div class="article-item"><span>🔔 ${t.message}</span><button class="danger" onclick="deleteTicker(${t.id})">🗑️</button></div>`).join(''); }
+  window.deleteTicker = async (id) => { await supabaseClient.from('ticker_messages').delete().eq('id', id); loadTickerAdmin(); loadAllData(); };
+  document.getElementById('addTickerBtn').onclick = async () => { const msg = prompt('Nuevo mensaje para el ticker'); if(msg) { await supabaseClient.from('ticker_messages').insert({message: msg, display_order: Date.now()}); loadTickerAdmin(); loadAllData(); } };
+  async function loadQuote() { const { data } = await supabaseClient.from('site_settings').select('value').eq('key','quote_text').single(); if(data) document.getElementById('quoteText').value = data.value; }
+  document.getElementById('saveQuoteBtn').onclick = async () => { const text = document.getElementById('quoteText').value; await supabaseClient.from('site_settings').upsert({key:'quote_text', value: text}, {onConflict:'key'}); loadAllData(); alert('Cita actualizada'); };
+  async function loadColorControls() { const settings = siteSettings; const container = document.getElementById('colorControls'); container.innerHTML = `
+    <div class="color-control">Gold: <input type="color" id="col_gold" value="${settings.gold}"></div>
+    <div class="color-control">Red: <input type="color" id="col_red" value="${settings.red}"></div>
+    <div class="color-control">Background: <input type="color" id="col_black" value="${settings.black}"></div>
+    <div class="color-control">Text Cream: <input type="color" id="col_cream" value="${settings.cream}"></div>
+    <div class="color-control">Gold Light: <input type="color" id="col_gold_light" value="${settings.gold_light}"></div>
+    <div class="color-control">Rose: <input type="color" id="col_rose" value="${settings.rose}"></div>
+  `; }
+  document.getElementById('saveColorsBtn')?.addEventListener('click', async () => {
+    const gold = document.getElementById('col_gold').value; const red = document.getElementById('col_red').value; const black = document.getElementById('col_black').value; const cream = document.getElementById('col_cream').value; const gold_light = document.getElementById('col_gold_light').value; const rose = document.getElementById('col_rose').value;
+    const updates = [{key:'gold',value:gold},{key:'red',value:red},{key:'black',value:black},{key:'cream',value:cream},{key:'gold_light',value:gold_light},{key:'rose',value:rose}];
+    for(const u of updates) await supabaseClient.from('site_settings').upsert(u, {onConflict:'key'});
+    await loadAllData(); alert('Colores guardados');
+  });
+
+  loginBtn.onclick = async () => {
+    const email = document.getElementById('adminEmail').value, pass = document.getElementById('adminPassword').value;
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+    if(error) { authStatus.innerText = 'Error: '+error.message; return; }
+    currentUser = data.user;
+    authSection.style.display = 'none';
+    adminContent.style.display = 'block';
+    loadAdminArticles(); loadSidebarAdmin(); loadTickerAdmin(); loadQuote(); loadColorControls();
+  };
+  async function checkSession() { const { data } = await supabaseClient.auth.getSession(); if(data.session) { currentUser = data.session.user; authSection.style.display = 'none'; adminContent.style.display = 'block'; loadAdminArticles(); loadSidebarAdmin(); loadTickerAdmin(); loadQuote(); loadColorControls(); } }
+  checkSession();
+  
+  document.addEventListener('mousemove', e => { if(window.innerWidth>1024){ document.getElementById('cursor').style.left=e.clientX+'px'; document.getElementById('cursor').style.top=e.clientY+'px'; document.getElementById('cursorRing').style.left=e.clientX+'px'; document.getElementById('cursorRing').style.top=e.clientY+'px'; } });
+  loadAllData();
+
+  const months=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']; const days=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado']; const now=new Date(); document.getElementById('masthead-date').innerHTML = `Nueva York · ${days[now.getDay()]}, ${now.getDate()} de ${months[now.getMonth()]} ${now.getFullYear()}`;
+</script>
+</body>
+</html>
