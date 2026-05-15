@@ -100,29 +100,119 @@
       font-weight: bold;
     }
     .admin-panel {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 3000;
-      display: none; justify-content: center; align-items: center; overflow-y: auto;
-      padding: 40px 20px;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 3000;
+      display: none; justify-content: center; align-items: flex-start; overflow-y: auto;
+      padding: 24px 16px;
     }
     .admin-panel.open { display: flex; }
     .admin-card {
-      max-width: 1000px; width: 100%; background: #1c1612; border: 1px solid var(--gold);
-      padding: 32px; border-radius: 4px; max-height: 90vh; overflow-y: auto;
+      max-width: 860px; width: 100%; background: #13100d; border: 1px solid var(--gold);
+      border-radius: 4px; overflow: hidden;
     }
-    .admin-card h3 { font-family: 'Cinzel', serif; color: var(--gold); margin: 20px 0 12px; }
-    .admin-card input, .admin-card textarea, .admin-card select {
-      width: 100%; background: #2a2320; border: 1px solid #4a4038; color: var(--cream);
-      padding: 8px 12px; margin-bottom: 12px; font-family: monospace;
+    .admin-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 28px; border-bottom: 1px solid #2a2320;
+      background: linear-gradient(90deg, #1c1612, #13100d);
     }
-    .admin-card button { background: var(--gold); border: none; color: #0a0a0a; padding: 8px 18px; margin-right: 8px; cursor: pointer; font-weight: bold; }
-    .admin-card .danger { background: var(--red); color: white; }
-    .article-item { border-bottom: 1px solid #4a4038; padding: 12px 0; display: flex; justify-content: space-between; align-items: center; }
-    .color-grid { display: flex; gap: 12px; flex-wrap: wrap; margin: 15px 0; }
-    .color-control { display: flex; align-items: center; gap: 8px; }
+    .admin-header h2 { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1rem; letter-spacing: 0.25em; }
+    .admin-close-btn { background: #2a2320; border: 1px solid #4a4038; color: var(--cream); padding: 6px 14px; cursor: pointer; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.15em; }
+    /* Tab Nav */
+    .admin-tabs { display: flex; border-bottom: 1px solid #2a2320; background: #0f0c09; flex-wrap: wrap; }
+    .admin-tab {
+      font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.35em;
+      color: #6b5f52; padding: 14px 18px; cursor: pointer; border: none;
+      background: transparent; text-transform: uppercase; border-bottom: 2px solid transparent;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .admin-tab:hover { color: var(--gold); }
+    .admin-tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); background: #1c1612; }
+    /* Tab Panes */
+    .admin-panes { padding: 28px; }
+    .admin-pane { display: none; }
+    .admin-pane.active { display: block; }
+    /* Form elements */
+    .admin-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 0; }
+    .admin-field { margin-bottom: 14px; }
+    .admin-field label { display: block; font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.35em; color: #8a7e72; margin-bottom: 6px; text-transform: uppercase; }
+    .admin-field input, .admin-field textarea, .admin-field select {
+      width: 100%; background: #1c1612; border: 1px solid #3a3028; color: var(--cream);
+      padding: 10px 14px; font-family: 'EB Garamond', serif; font-size: 0.95rem;
+      outline: none; transition: border-color 0.2s; border-radius: 2px;
+    }
+    .admin-field input:focus, .admin-field textarea:focus { border-color: var(--gold); }
+    .admin-field textarea { min-height: 160px; resize: vertical; line-height: 1.7; }
+    .admin-field.full { grid-column: 1 / -1; }
+    .admin-radio-group { display: flex; gap: 20px; align-items: center; }
+    .admin-radio-group label { font-family: 'EB Garamond', serif; font-size: 0.95rem; color: var(--cream); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .admin-radio-group input[type=radio], .admin-checkbox { accent-color: var(--gold); width: 16px; height: 16px; }
+    .admin-checkbox-label { display: flex; align-items: center; gap: 8px; font-family: 'EB Garamond', serif; color: var(--cream); cursor: pointer; font-size: 0.95rem; }
+    .admin-btn { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.35em; background: var(--gold); border: none; color: #0a0a0a; padding: 12px 24px; cursor: pointer; font-weight: bold; transition: opacity 0.2s; text-transform: uppercase; }
+    .admin-btn:hover { opacity: 0.85; }
+    .admin-btn.danger { background: var(--red); color: white; }
+    .admin-btn.secondary { background: #2a2320; color: var(--cream); border: 1px solid #4a4038; }
+    .admin-btn-row { display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+    .admin-section-title { font-family: 'Cinzel', serif; color: var(--gold); font-size: 0.58rem; letter-spacing: 0.4em; text-transform: uppercase; margin: 0 0 18px; padding-bottom: 10px; border-bottom: 1px solid #2a2320; }
+    .article-item { border-bottom: 1px solid #2a2320; padding: 12px 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .article-item span { font-family: 'EB Garamond', serif; font-size: 0.95rem; color: #b8a896; }
+    .article-item-btns { display: flex; gap: 6px; flex-shrink: 0; }
+    .color-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 0 0 20px; }
+    .color-control { display: flex; flex-direction: column; gap: 6px; }
+    .color-control label { font-family: 'Cinzel', serif; font-size: 0.45rem; letter-spacing: 0.3em; color: #8a7e72; text-transform: uppercase; }
+    .color-control input[type=color] { width: 100%; height: 40px; border: 1px solid #3a3028; background: #1c1612; cursor: pointer; padding: 2px; }
+    .admin-divider { border: none; border-top: 1px solid #2a2320; margin: 22px 0; }
+    .admin-hint { font-family: 'EB Garamond', serif; font-style: italic; font-size: 0.85rem; color: #6b5f52; margin-bottom: 14px; }
+    /* Auth */
+    #authSection { padding: 28px; }
+    #authSection h3 { font-family: 'Cinzel', serif; color: var(--gold); font-size: 0.7rem; letter-spacing: 0.4em; margin-bottom: 18px; text-transform: uppercase; }
+    @media (max-width: 600px) {
+      .admin-form-row { grid-template-columns: 1fr; }
+      .color-grid { grid-template-columns: repeat(2, 1fr); }
+      .admin-tab { font-size: 0.45rem; padding: 12px 12px; }
+    }
+    /* Article Modal */
+    .article-modal-overlay {
+      position: fixed; inset: 0; background: rgba(5,3,2,0.97); z-index: 4000;
+      display: flex; align-items: flex-start; justify-content: center;
+      overflow-y: auto; padding: 40px 20px; animation: fadeInOverlay 0.3s ease;
+    }
+    @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+    .article-modal {
+      max-width: 720px; width: 100%; background: #0d0a08; border: 1px solid #2a2320;
+      border-top: 3px solid var(--gold); animation: slideUpModal 0.35s ease;
+      margin: auto;
+    }
+    @keyframes slideUpModal { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-header { padding: 40px 48px 0; border-bottom: 1px solid #1f1c18; }
+    .modal-category { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.55em; color: var(--gold); margin-bottom: 16px; text-transform: uppercase; }
+    .modal-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900; font-style: italic; line-height: 1.15; color: var(--cream); margin-bottom: 16px; }
+    .modal-byline { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.3em; color: #6b5f52; margin-bottom: 28px; }
+    .modal-cover { width: 100%; max-height: 400px; object-fit: cover; display: block; }
+    .modal-body { padding: 40px 48px 48px; }
+    .modal-excerpt { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-style: italic; color: #b8a896; border-left: 2px solid var(--red); padding-left: 18px; margin-bottom: 32px; line-height: 1.7; }
+    .modal-content { }
+    .modal-content p { font-family: 'EB Garamond', serif; font-size: 1.05rem; line-height: 1.95; color: #cbc2b5; margin-bottom: 22px; }
+    .modal-content p:first-child::first-letter { font-family: 'Playfair Display', serif; font-size: 4.5rem; float: left; line-height: 0.72; margin-right: 12px; margin-bottom: 4px; color: var(--red); font-weight: 900; }
+    .modal-close-row { padding: 0 48px 36px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #1f1c18; padding-top: 28px; }
+    .modal-signature { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.9rem; color: #4a4038; }
+    .modal-close-btn { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.4em; background: transparent; border: 1px solid #3a3028; color: #8a7e72; padding: 10px 22px; cursor: pointer; text-transform: uppercase; transition: all 0.2s; }
+    .modal-close-btn:hover { border-color: var(--gold); color: var(--gold); }
+    @media (max-width: 600px) {
+      .modal-header { padding: 28px 24px 0; }
+      .modal-body { padding: 28px 24px 36px; }
+      .modal-close-row { padding: 20px 24px 28px; }
+    }
+    /* En Profundidad full-width */
+    .longread-full { border: 1px solid var(--border); background: #0d0a08; margin-bottom: 60px; }
+    .longread-full-inner { padding: 48px 48px 40px; }
+    .longread-full-body { display: grid; grid-template-columns: 2fr 1fr; gap: 48px; }
+    .longread-text .longread-body p { font-size: 1rem; line-height: 1.9; color: #8a7e72; margin-bottom: 18px; }
+    .longread-text .longread-body p:first-child::first-letter { font-family: 'Playfair Display', serif; font-size: 4rem; float: left; line-height: 0.7; margin-right: 12px; color: var(--red); font-weight: 900; }
+    .longread-readmore { margin-top: 24px; }
+    .longread-sidebar { border-left: 1px solid #1f1c18; padding-left: 36px; }
     @media (max-width: 768px) {
-      .hero-article { grid-template-columns: 1fr; }
-      .articles-grid { grid-template-columns: 1fr; }
-      .two-col { grid-template-columns: 1fr; }
+      .longread-full-body { grid-template-columns: 1fr; }
+      .longread-sidebar { border-left: none; border-top: 1px solid #1f1c18; padding-left: 0; padding-top: 28px; }
+      .longread-full-inner { padding: 28px 20px; }
     }
   </style>
 </head>
@@ -136,29 +226,90 @@
 <button class="admin-float" id="adminToggleBtn">👑 ADMIN</button>
 <div class="admin-panel" id="adminPanel">
   <div class="admin-card">
-    <div style="display: flex; justify-content: space-between;"><h2 style="color:var(--gold)">XOXO · Consola de Poder</h2><button id="closeAdminBtn" style="background:#333;">✕ Cerrar</button></div>
+    <div class="admin-header">
+      <h2>✦ XOXO · Consola de Poder</h2>
+      <button class="admin-close-btn" id="closeAdminBtn">✕ Cerrar</button>
+    </div>
     <div id="authSection">
       <h3>Acceso Restringido</h3>
-      <input type="email" id="adminEmail" placeholder="Email" />
-      <input type="password" id="adminPassword" placeholder="Contraseña" />
-      <button id="loginBtn">Iniciar Sesión</button>
-      <div id="authStatus" style="color: #e8b4b4;"></div>
+      <div class="admin-field"><label>Email</label><input type="email" id="adminEmail" placeholder="tu@email.com" /></div>
+      <div class="admin-field"><label>Contraseña</label><input type="password" id="adminPassword" placeholder="••••••••" /></div>
+      <button class="admin-btn" id="loginBtn">Iniciar Sesión</button>
+      <div id="authStatus" style="color:#e8b4b4; margin-top:10px; font-family:'EB Garamond'; font-size:0.9rem;"></div>
     </div>
     <div id="adminContent" style="display:none;">
-      <h3>🎨 Personalizar Colores</h3>
-      <div class="color-grid" id="colorControls"></div>
-      <button id="saveColorsBtn">Guardar Paleta</button>
-      <h3>📝 Gestionar Columnas (Artículos)</h3>
-      <button id="newArticleBtn">+ Nueva Columna</button>
-      <div id="articlesListAdmin" style="margin-top: 20px;"></div>
-      <h3>📌 Rumores (Sidebar)</h3>
-      <div id="sidebarAdminList"></div>
-      <button id="addRumorBtn">+ Añadir rumor</button>
-      <h3>🏷️ Ticker (noticias rápidas)</h3>
-      <div id="tickerAdminList"></div>
-      <button id="addTickerBtn">+ Mensaje ticker</button>
-      <h3>💬 Cita destacada (Quote)</h3>
-      <textarea id="quoteText" rows="2" style="width:100%"></textarea><button id="saveQuoteBtn">Guardar cita</button>
+      <nav class="admin-tabs">
+        <button class="admin-tab active" data-tab="columnas">✦ Columnas</button>
+        <button class="admin-tab" data-tab="rumores">📌 Rumores</button>
+        <button class="admin-tab" data-tab="ticker">🏷️ Ticker</button>
+        <button class="admin-tab" data-tab="cita">💬 Cita</button>
+        <button class="admin-tab" data-tab="diseno">🎨 Diseño</button>
+      </nav>
+      <div class="admin-panes">
+        <!-- COLUMNAS -->
+        <div class="admin-pane active" id="pane-columnas">
+          <p class="admin-section-title">Nueva Columna</p>
+          <div id="articleFormArea">
+            <div class="admin-form-row">
+              <div class="admin-field"><label>Título</label><input type="text" id="art_title" placeholder="El misterio de..."/></div>
+              <div class="admin-field"><label>Autor/a</label><input type="text" id="art_author" value="Gossip Girl"/></div>
+            </div>
+            <div class="admin-form-row">
+              <div class="admin-field"><label>Categoría</label><input type="text" id="art_category" placeholder="Escándalo, Amor, Venganza..."/></div>
+              <div class="admin-field"><label>Fecha (YYYY-MM-DD)</label><input type="date" id="art_date"/></div>
+            </div>
+            <div class="admin-field"><label>Entradilla (resumen breve)</label><textarea id="art_excerpt" rows="2" placeholder="La frase que engancha al lector..."></textarea></div>
+            <div class="admin-field"><label>URL de imagen (opcional)</label><input type="url" id="art_image" placeholder="https://..."/></div>
+            <div class="admin-field"><label>Contenido completo — separa párrafos con una línea en blanco</label><textarea id="art_content" rows="10" placeholder="Escribe aquí el cuerpo del artículo.&#10;&#10;Deja una línea en blanco entre párrafos.&#10;&#10;El primer párrafo tendrá la letra capital decorativa automáticamente."></textarea></div>
+            <div class="admin-field">
+              <label class="admin-checkbox-label"><input type="checkbox" class="admin-checkbox" id="art_hero"/> Marcar como artículo principal (Hero)</label>
+            </div>
+            <div class="admin-btn-row">
+              <button class="admin-btn" id="saveArticleBtn">✦ Publicar Columna</button>
+              <button class="admin-btn secondary" id="cancelEditBtn" style="display:none;">Cancelar edición</button>
+            </div>
+          </div>
+          <hr class="admin-divider"/>
+          <p class="admin-section-title">Columnas Publicadas</p>
+          <div id="articlesListAdmin"></div>
+        </div>
+        <!-- RUMORES -->
+        <div class="admin-pane" id="pane-rumores">
+          <p class="admin-section-title">Añadir Rumor</p>
+          <div class="admin-form-row">
+            <div class="admin-field"><label>Tag</label>
+              <select id="rumor_tag"><option>Spotted</option><option>Whisper</option><option>Confirmed</option><option>Breaking</option></select>
+            </div>
+            <div class="admin-field"><label>Texto del rumor</label><input type="text" id="rumor_text" placeholder="Se dice que..."/></div>
+          </div>
+          <button class="admin-btn" id="addRumorBtn">+ Añadir Rumor</button>
+          <hr class="admin-divider"/>
+          <p class="admin-section-title">Rumores Actuales</p>
+          <div id="sidebarAdminList"></div>
+        </div>
+        <!-- TICKER -->
+        <div class="admin-pane" id="pane-ticker">
+          <p class="admin-section-title">Nuevo Mensaje</p>
+          <div class="admin-field"><label>Mensaje para el ticker</label><input type="text" id="ticker_msg" placeholder="Breaking: La heredera vuelve..."/></div>
+          <button class="admin-btn" id="addTickerBtn">+ Añadir al Ticker</button>
+          <hr class="admin-divider"/>
+          <p class="admin-section-title">Mensajes Activos</p>
+          <div id="tickerAdminList"></div>
+        </div>
+        <!-- CITA -->
+        <div class="admin-pane" id="pane-cita">
+          <p class="admin-section-title">Cita Destacada</p>
+          <p class="admin-hint">Esta frase aparece en la sección central de la portada.</p>
+          <div class="admin-field"><label>Texto de la cita</label><textarea id="quoteText" rows="3" placeholder="En esta ciudad, los secretos no se guardan. Se invierten."></textarea></div>
+          <button class="admin-btn" id="saveQuoteBtn">Guardar Cita</button>
+        </div>
+        <!-- DISEÑO -->
+        <div class="admin-pane" id="pane-diseno">
+          <p class="admin-section-title">Paleta de Colores</p>
+          <div class="color-grid" id="colorControls"></div>
+          <button class="admin-btn" id="saveColorsBtn">Guardar Paleta</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -252,8 +403,24 @@
       <div class="section-label">Lo que circula</div><div class="articles-grid">${gridHtml || '<p>No hay columnas aún</p>'}</div>
       <div class="gossip-quote"><span class="quote-mark">"</span><p class="quote-text">${quoteText}</p><div class="quote-attribution">— Gossip Girl · Columna</div></div>
       <div class="section-label">En Profundidad</div>
-      <div class="two-col"><div class="sidebar-main"><div class="article-tag">Análisis</div><h2 class="longread-headline">${longreadTitle}</h2>${longreadBody}</div>
-      <div class="sidebar-panel"><div class="sidebar-title">Rumores de la Semana</div>${sidebarHtml || '<div class="sidebar-item">No hay rumores aún</div>'}</div></div>
+      <div class="longread-full">
+        <div class="longread-full-inner">
+          <div class="article-tag" style="margin-bottom:10px;">Análisis</div>
+          <h2 class="longread-headline" style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-style:italic;font-weight:900;color:var(--cream);margin-bottom:28px;line-height:1.2;">${longreadTitle}</h2>
+          <div class="longread-full-body">
+            <div class="longread-text">
+              ${longreadBody}
+              <div class="longread-readmore">
+                <button class="read-more-btn" onclick="openArticleModal(${editorialArticle.id})">Leer artículo completo →</button>
+              </div>
+            </div>
+            <div class="longread-sidebar">
+              <div class="sidebar-title">Rumores de la Semana</div>
+              ${sidebarHtml || '<div class="sidebar-item">No hay rumores aún</div>'}
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="signature-block"><p class="signature-text">Y recuerda, querida:<br/>estoy en todas partes.</p><p class="signature-name">XOXO, Gossip Girl</p></div>
     `;
     appMain.innerHTML = finalHtml;
@@ -262,15 +429,35 @@
   window.openArticleModal = async (id) => {
     const article = articles.find(a => a.id === id);
     if(!article) return;
+    // Convert plain text with double newlines to paragraphs
+    function formatContent(text) {
+      if(!text) return '';
+      // If already has HTML tags, render as-is but wrap orphan text in <p>
+      if(/<[a-z][\s\S]*>/i.test(text)) return text;
+      // Plain text: split on blank lines → paragraphs
+      return text.split(/\n\s*\n/).map(para => `<p>${para.replace(/\n/g,'<br>')}</p>`).join('');
+    }
+    const contentHtml = formatContent(article.content);
+    const excerptHtml = article.excerpt ? `<div class="modal-excerpt">${article.excerpt}</div>` : '';
+    const coverHtml = article.image_url ? `<img class="modal-cover" src="${article.image_url}" alt="${article.title}">` : '';
+    const dateStr = article.published_date ? new Date(article.published_date).toLocaleDateString('es-ES', {day:'numeric',month:'long',year:'numeric'}) : '';
     const modalHtml = `
-      <div style="position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:4000; display:flex; align-items:center; justify-content:center;" onclick="this.remove()">
-        <div style="max-width:600px; background:#0d0a08; padding:32px; border:1px solid var(--gold); max-height:80vh; overflow:auto;" onclick="event.stopPropagation()">
-          <div style="font-family:Cinzel; color:var(--gold);">${article.category || 'EXCLUSIVA'}</div>
-          <h2 style="font-family:'Playfair Display'; font-size:1.8rem;">${article.title}</h2>
-          <p style="color:#b8a896; margin:12px 0;">Por ${article.author || 'Gossip Girl'} · ${new Date(article.published_date).toLocaleDateString('es-ES')}</p>
-          ${article.image_url ? `<img src="${article.image_url}" style="width:100%; margin:16px 0; border-radius:4px;">` : ''}
-          <div style="line-height:1.7; color:#cbc2b5;">${article.content}</div>
-          <button style="margin-top:20px; background:var(--red); padding:8px 20px; color:white; border:none;" onclick="this.closest('[onclick]').remove()">Cerrar</button>
+      <div class="article-modal-overlay" id="articleModalOverlay" onclick="if(event.target===this)this.remove()">
+        <div class="article-modal">
+          <div class="modal-header">
+            <div class="modal-category">${article.category || 'Exclusiva'}</div>
+            <h2 class="modal-title">${article.title}</h2>
+            <div class="modal-byline">Por ${article.author || 'Gossip Girl'} &nbsp;·&nbsp; ${dateStr}</div>
+          </div>
+          ${coverHtml}
+          <div class="modal-body">
+            ${excerptHtml}
+            <div class="modal-content">${contentHtml}</div>
+          </div>
+          <div class="modal-close-row">
+            <span class="modal-signature">XOXO, Gossip Girl</span>
+            <button class="modal-close-btn" onclick="document.getElementById('articleModalOverlay').remove()">✕ Cerrar</button>
+          </div>
         </div>
       </div>
     `;
@@ -286,61 +473,149 @@
   const adminContent = document.getElementById('adminContent');
   const authStatus = document.getElementById('authStatus');
 
-  // Forzar apertura con estilo inline por si acaso
-  adminToggle.onclick = (e) => {
-    e.preventDefault();
-    adminPanel.style.display = 'flex';
-    adminPanel.classList.add('open');
-  };
-  closeAdmin.onclick = () => {
-    adminPanel.style.display = 'none';
-    adminPanel.classList.remove('open');
-    if(!currentUser) adminContent.style.display = 'none';
+  adminToggle.onclick = (e) => { e.preventDefault(); adminPanel.style.display='flex'; adminPanel.classList.add('open'); };
+  closeAdmin.onclick = () => { adminPanel.style.display='none'; adminPanel.classList.remove('open'); };
+
+  // Tab switching
+  document.querySelectorAll('.admin-tab').forEach(tab => {
+    tab.onclick = () => {
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.admin-pane').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('pane-'+tab.dataset.tab).classList.add('active');
+    };
+  });
+
+  // ---- ARTICLES ----
+  let editingArticleId = null;
+  function clearArticleForm() {
+    ['art_title','art_author','art_category','art_image','art_excerpt','art_content'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    document.getElementById('art_author').value = 'Gossip Girl';
+    document.getElementById('art_date').value = new Date().toISOString().slice(0,10);
+    document.getElementById('art_hero').checked = false;
+    editingArticleId = null;
+    document.getElementById('cancelEditBtn').style.display = 'none';
+    document.getElementById('saveArticleBtn').textContent = '✦ Publicar Columna';
+  }
+  clearArticleForm();
+
+  document.getElementById('cancelEditBtn').onclick = () => clearArticleForm();
+
+  document.getElementById('saveArticleBtn').onclick = async () => {
+    const title = document.getElementById('art_title').value.trim();
+    const content = document.getElementById('art_content').value.trim();
+    if(!title || !content) { alert('El título y el contenido son obligatorios.'); return; }
+    const payload = {
+      title, content,
+      author: document.getElementById('art_author').value || 'Gossip Girl',
+      category: document.getElementById('art_category').value || 'Chisme',
+      excerpt: document.getElementById('art_excerpt').value,
+      image_url: document.getElementById('art_image').value,
+      published_date: document.getElementById('art_date').value || new Date().toISOString().slice(0,10),
+      is_hero: document.getElementById('art_hero').checked,
+      is_published: true,
+      updated_at: new Date()
+    };
+    if(editingArticleId) { await supabaseClient.from('articles').update(payload).eq('id', editingArticleId); }
+    else { await supabaseClient.from('articles').insert(payload); }
+    clearArticleForm();
+    loadAdminArticles(); loadAllData();
   };
 
-  async function loadAdminArticles() { if(!currentUser) return; const { data } = await supabaseClient.from('articles').select('*').order('published_date', {ascending:false}); renderAdminArticles(data); }
+  async function loadAdminArticles() {
+    if(!currentUser) return;
+    const { data } = await supabaseClient.from('articles').select('*').order('published_date', {ascending:false});
+    renderAdminArticles(data || []);
+  }
   function renderAdminArticles(arts) {
     const container = document.getElementById('articlesListAdmin');
-    container.innerHTML = arts.map(a => `<div class="article-item"><span><strong>${a.title}</strong> - ${a.author} - ${a.published_date}</span><div><button onclick="editArticle(${a.id})">✏️</button><button class="danger" onclick="deleteArticle(${a.id})">🗑️</button></div></div>`).join('');
+    if(!arts.length) { container.innerHTML = '<p style="color:#6b5f52;font-family:\'EB Garamond\';font-style:italic;padding:12px 0;">No hay columnas publicadas aún.</p>'; return; }
+    container.innerHTML = arts.map(a => `
+      <div class="article-item">
+        <span><strong>${a.title}</strong> — <em>${a.author}</em> · ${a.published_date}${a.is_hero?' ✦':''}</span>
+        <div class="article-item-btns">
+          <button class="admin-btn secondary" style="padding:6px 12px;font-size:0.45rem;" onclick="editArticle(${a.id})">✏️ Editar</button>
+          <button class="admin-btn danger" style="padding:6px 12px;font-size:0.45rem;" onclick="deleteArticle(${a.id})">🗑️</button>
+        </div>
+      </div>`).join('');
   }
-  window.editArticle = async (id) => { const { data } = await supabaseClient.from('articles').select('*').eq('id', id).single(); showArticleForm(data); };
-  window.deleteArticle = async (id) => { if(confirm('Eliminar columna?')) { await supabaseClient.from('articles').delete().eq('id', id); loadAdminArticles(); loadAllData(); } };
-  async function showArticleForm(article=null) {
-    const title = prompt('Título', article?.title || '');
-    const author = prompt('Autor/a', article?.author || 'Gossip Girl');
-    const excerpt = prompt('Entradilla', article?.excerpt || '');
-    const content = prompt('Contenido completo (HTML o texto)', article?.content || '');
-    const image_url = prompt('URL de la imagen (opcional)', article?.image_url || '');
-    const published_date = prompt('Fecha (YYYY-MM-DD)', article?.published_date || new Date().toISOString().slice(0,10));
-    const category = prompt('Categoría (ej: Escándalo, Amor, Venganza)', article?.category || 'Chisme');
-    const is_hero = confirm('¿Marcar como artículo principal (Hero)?');
-    if(title && content) {
-      const payload = { title, author, excerpt, content, image_url, published_date, category, is_hero, is_published: true, updated_at: new Date() };
-      if(article?.id) await supabaseClient.from('articles').update(payload).eq('id', article.id);
-      else await supabaseClient.from('articles').insert(payload);
-      loadAdminArticles(); loadAllData();
-    }
+  window.editArticle = async (id) => {
+    const { data: a } = await supabaseClient.from('articles').select('*').eq('id', id).single();
+    if(!a) return;
+    document.getElementById('art_title').value = a.title || '';
+    document.getElementById('art_author').value = a.author || 'Gossip Girl';
+    document.getElementById('art_category').value = a.category || '';
+    document.getElementById('art_excerpt').value = a.excerpt || '';
+    document.getElementById('art_image').value = a.image_url || '';
+    document.getElementById('art_date').value = a.published_date || '';
+    document.getElementById('art_content').value = a.content || '';
+    document.getElementById('art_hero').checked = !!a.is_hero;
+    editingArticleId = id;
+    document.getElementById('cancelEditBtn').style.display = 'inline-block';
+    document.getElementById('saveArticleBtn').textContent = '✦ Guardar Cambios';
+    // switch to columnas tab and scroll to top of form
+    document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.admin-pane').forEach(p=>p.classList.remove('active'));
+    document.querySelector('[data-tab="columnas"]').classList.add('active');
+    document.getElementById('pane-columnas').classList.add('active');
+    document.getElementById('art_title').scrollIntoView({behavior:'smooth', block:'center'});
+  };
+  window.deleteArticle = async (id) => {
+    if(confirm('¿Eliminar esta columna?')) { await supabaseClient.from('articles').delete().eq('id', id); loadAdminArticles(); loadAllData(); }
+  };
+
+  // ---- RUMORES ----
+  async function loadSidebarAdmin() {
+    const { data } = await supabaseClient.from('sidebar_items').select('*').order('display_order');
+    const cont = document.getElementById('sidebarAdminList');
+    if(!data?.length) { cont.innerHTML='<p style="color:#6b5f52;font-family:\'EB Garamond\';font-style:italic;padding:12px 0;">No hay rumores.</p>'; return; }
+    cont.innerHTML = data.map(s => `<div class="article-item"><span><b>${s.tag}</b>: ${s.title}</span><button class="admin-btn danger" style="padding:6px 12px;font-size:0.45rem;" onclick="deleteSidebarItem(${s.id})">✖️</button></div>`).join('');
   }
-  document.getElementById('newArticleBtn').onclick = () => showArticleForm(null);
-  async function loadSidebarAdmin() { const { data } = await supabaseClient.from('sidebar_items').select('*').order('display_order'); const cont = document.getElementById('sidebarAdminList'); cont.innerHTML = data.map(s => `<div class="article-item"><span><b>${s.tag}</b>: ${s.title}</span><button class="danger" onclick="deleteSidebarItem(${s.id})">✖️</button></div>`).join(''); }
   window.deleteSidebarItem = async (id) => { await supabaseClient.from('sidebar_items').delete().eq('id', id); loadSidebarAdmin(); loadAllData(); };
-  document.getElementById('addRumorBtn').onclick = async () => { const tag = prompt('Tag (Spotted/Whisper)','Spotted'); const title=prompt('Texto del rumor'); if(tag && title){ await supabaseClient.from('sidebar_items').insert({tag, title, display_order: Date.now()}); loadSidebarAdmin(); loadAllData();} };
-  async function loadTickerAdmin() { const { data } = await supabaseClient.from('ticker_messages').select('*'); const cont = document.getElementById('tickerAdminList'); cont.innerHTML = data.map(t => `<div class="article-item"><span>🔔 ${t.message}</span><button class="danger" onclick="deleteTicker(${t.id})">🗑️</button></div>`).join(''); }
+  document.getElementById('addRumorBtn').onclick = async () => {
+    const tag = document.getElementById('rumor_tag').value;
+    const title = document.getElementById('rumor_text').value.trim();
+    if(!title) return;
+    await supabaseClient.from('sidebar_items').insert({tag, title, display_order: Date.now()});
+    document.getElementById('rumor_text').value = '';
+    loadSidebarAdmin(); loadAllData();
+  };
+
+  // ---- TICKER ----
+  async function loadTickerAdmin() {
+    const { data } = await supabaseClient.from('ticker_messages').select('*');
+    const cont = document.getElementById('tickerAdminList');
+    if(!data?.length) { cont.innerHTML='<p style="color:#6b5f52;font-family:\'EB Garamond\';font-style:italic;padding:12px 0;">No hay mensajes.</p>'; return; }
+    cont.innerHTML = data.map(t => `<div class="article-item"><span>🔔 ${t.message}</span><button class="admin-btn danger" style="padding:6px 12px;font-size:0.45rem;" onclick="deleteTicker(${t.id})">🗑️</button></div>`).join('');
+  }
   window.deleteTicker = async (id) => { await supabaseClient.from('ticker_messages').delete().eq('id', id); loadTickerAdmin(); loadAllData(); };
-  document.getElementById('addTickerBtn').onclick = async () => { const msg = prompt('Nuevo mensaje para el ticker'); if(msg) { await supabaseClient.from('ticker_messages').insert({message: msg, display_order: Date.now()}); loadTickerAdmin(); loadAllData(); } };
+  document.getElementById('addTickerBtn').onclick = async () => {
+    const msg = document.getElementById('ticker_msg').value.trim();
+    if(!msg) return;
+    await supabaseClient.from('ticker_messages').insert({message: msg, display_order: Date.now()});
+    document.getElementById('ticker_msg').value = '';
+    loadTickerAdmin(); loadAllData();
+  };
+
+  // ---- CITA ----
   async function loadQuote() { const { data } = await supabaseClient.from('site_settings').select('value').eq('key','quote_text').single(); if(data) document.getElementById('quoteText').value = data.value; }
   document.getElementById('saveQuoteBtn').onclick = async () => { const text = document.getElementById('quoteText').value; await supabaseClient.from('site_settings').upsert({key:'quote_text', value: text}, {onConflict:'key'}); loadAllData(); alert('Cita actualizada'); };
-  async function loadColorControls() { const settings = siteSettings; const container = document.getElementById('colorControls'); container.innerHTML = `
-    <div class="color-control">Gold: <input type="color" id="col_gold" value="${settings.gold}"></div>
-    <div class="color-control">Red: <input type="color" id="col_red" value="${settings.red}"></div>
-    <div class="color-control">Background: <input type="color" id="col_black" value="${settings.black}"></div>
-    <div class="color-control">Text Cream: <input type="color" id="col_cream" value="${settings.cream}"></div>
-    <div class="color-control">Gold Light: <input type="color" id="col_gold_light" value="${settings.gold_light}"></div>
-    <div class="color-control">Rose: <input type="color" id="col_rose" value="${settings.rose}"></div>
-  `; }
+
+  // ---- COLORES ----
+  async function loadColorControls() {
+    const settings = siteSettings;
+    const container = document.getElementById('colorControls');
+    container.innerHTML = `
+      <div class="color-control"><label>Dorado</label><input type="color" id="col_gold" value="${settings.gold}"></div>
+      <div class="color-control"><label>Rojo</label><input type="color" id="col_red" value="${settings.red}"></div>
+      <div class="color-control"><label>Fondo</label><input type="color" id="col_black" value="${settings.black}"></div>
+      <div class="color-control"><label>Texto crema</label><input type="color" id="col_cream" value="${settings.cream}"></div>
+      <div class="color-control"><label>Dorado claro</label><input type="color" id="col_gold_light" value="${settings.gold_light}"></div>
+      <div class="color-control"><label>Rosa</label><input type="color" id="col_rose" value="${settings.rose}"></div>
+    `;
+  }
   document.getElementById('saveColorsBtn')?.addEventListener('click', async () => {
-    const gold = document.getElementById('col_gold').value; const red = document.getElementById('col_red').value; const black = document.getElementById('col_black').value; const cream = document.getElementById('col_cream').value; const gold_light = document.getElementById('col_gold_light').value; const rose = document.getElementById('col_rose').value;
-    const updates = [{key:'gold',value:gold},{key:'red',value:red},{key:'black',value:black},{key:'cream',value:cream},{key:'gold_light',value:gold_light},{key:'rose',value:rose}];
+    const updates = [{key:'gold',value:document.getElementById('col_gold').value},{key:'red',value:document.getElementById('col_red').value},{key:'black',value:document.getElementById('col_black').value},{key:'cream',value:document.getElementById('col_cream').value},{key:'gold_light',value:document.getElementById('col_gold_light').value},{key:'rose',value:document.getElementById('col_rose').value}];
     for(const u of updates) await supabaseClient.from('site_settings').upsert(u, {onConflict:'key'});
     await loadAllData(); alert('Colores guardados');
   });
